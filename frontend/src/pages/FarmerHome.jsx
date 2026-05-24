@@ -31,6 +31,14 @@ import { useLanguage } from '../i18n/LanguageContext'
 
 const BACKEND = import.meta.env.VITE_API_URL || 'http://localhost:8000'
 
+const normalizePdfUrl = (pdfUrl) => {
+  if (!pdfUrl) return null
+  const fixedUrl = pdfUrl.replace(/\\/g, '/')
+  const localPath = fixedUrl.replace(/^https?:\/\/(?:localhost|127\.0\.0\.1)(?::\d+)?/i, '')
+  if (/^https?:\/\//i.test(fixedUrl) && !/^https?:\/\/(?:localhost|127\.0\.0\.1)(?::\d+)?/i.test(fixedUrl)) return fixedUrl
+  return `${BACKEND.replace(/\/+$, '')}/${localPath.replace(/^\/+/, '')}`
+}
+
 const cardStyle = {
   backgroundColor: '#FFFFFF',
   border: '1px solid #E6DCC9',
@@ -875,7 +883,7 @@ export default function FarmerHome() {
                             <div className="flex flex-wrap gap-2 mt-4 pt-2 border-t border-gray-100">
                               {claim.pdf_url && (
                                 <a
-                                  href={claim.pdf_url}
+                                  href={normalizePdfUrl(claim.pdf_url)}
                                   target="_blank"
                                   rel="noreferrer"
                                   className="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-[#E88125] text-white hover:bg-[#cf6f1b] font-semibold text-sm transition shadow-sm"

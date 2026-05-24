@@ -35,6 +35,14 @@ import { useLanguage } from '../i18n/LanguageContext';
 
 const BACKEND = import.meta.env.VITE_API_URL || 'http://localhost:8000';
 
+const normalizePdfUrl = (pdfUrl) => {
+  if (!pdfUrl) return null
+  const fixedUrl = pdfUrl.replace(/\\/g, '/')
+  const localPath = fixedUrl.replace(/^https?:\/\/(?:localhost|127\.0\.0\.1)(?::\d+)?/i, '')
+  if (/^https?:\/\//i.test(fixedUrl) && !/^https?:\/\/(?:localhost|127\.0\.0\.1)(?::\d+)?/i.test(fixedUrl)) return fixedUrl
+  return `${BACKEND.replace(/\/+$, '')}/${localPath.replace(/^\/+/, '')}`
+}
+
 const BimaSetuDashboard = () => {
   const { user, farmerId } = useAuth();
   const { t } = useLanguage();
@@ -68,7 +76,7 @@ const BimaSetuDashboard = () => {
         if (json.success && isMounted) {
           const claims = json.data?.claims || [];
           const mapped = claims.map(c => {
-            const pdfUrl = c.pdf_path ? `${BACKEND}/${c.pdf_path.replace(/\\/g, '/')}` : null;
+            const pdfUrl = c.pdf_path ? normalizePdfUrl(c.pdf_path) : null;
             return {
               id: c.id,
               cropName: c.damage_type || t('dashboard.cropAssessment'),
@@ -159,87 +167,32 @@ const BimaSetuDashboard = () => {
       setUploading(false);
     }
   };
- const handleGenerateReport=()=>{
 
-if(
+  const handleGenerateReport = () => {
+    if (!analysisResult?.reportUrl) {
+      alert(t('dashboard.noPdf'))
+      return
+    }
+    window.open(normalizePdfUrl(analysisResult.reportUrl), '_blank')
+  };
 
-!analysisResult?.reportUrl
+  const handleDownloadPDF = (pdfUrl) => {
+    if (!pdfUrl) {
+      alert(t('dashboard.pdfNotGenerated'))
+      return
+    }
+    const fixedUrl = normalizePdfUrl(pdfUrl)
+    window.open(fixedUrl, '_blank')
+  };
 
-){
 
-alert(
-
-t('dashboard.noPdf')
-
-)
-
-return
-
-}
-
-window.open(
-
-analysisResult.reportUrl,
-
-'_blank'
-
-)
-
-};
-
-const handleDownloadPDF=(pdfUrl)=>{
-
-if(!pdfUrl){
-
-alert(
-
-t('dashboard.pdfNotGenerated')
-
-)
-
-return
-
-}
-
-const fixedUrl=
-
-pdfUrl.replace(
-
-/\\/g,
-
-'/'
-
-)
-
-window.open(
-
-fixedUrl,
-
-'_blank'
-
-)
-
-};
-
-  const handleViewReport=(assessmentId)=>{
-
-        const report=
-
-        assessments.find(
-
-        a=>a.id===assessmentId
-
-        )
-
-        if(
-
-        report?.reportUrl
-
-        ){
+  const handleViewReport = (assessmentId) => {
+    const report = assessments.find((a) => a.id === assessmentId)
+    if (report?.reportUrl) {
 
         window.open(
 
-        report.reportUrl,
+        normalizePdfUrl(report.reportUrl),
 
         '_blank'
 
@@ -709,7 +662,7 @@ fixedUrl,
                       <ChevronRight className="w-4 h-4 text-gray-400 group-hover:text-[#E88125] transition-colors"/>
                     </button>
 
-                    <button onClick={()=>analysisResult?.reportUrl?window.open(analysisResult.reportUrl,'_blank'):alert(t('dashboard.generateFirst'))} className="w-full flex items-center justify-between p-3 rounded-xl bg-[#FCFAF5] border border-[#E6DCC9] hover:border-[#E88125] hover:bg-white transition-all duration-300 group">
+                    <button onClick={()=>analysisResult?.reportUrl?window.open(normalizePdfUrl(analysisResult.reportUrl),'_blank'):alert(t('dashboard.generateFirst'))} className="w-full flex items-center justify-between p-3 rounded-xl bg-[#FCFAF5] border border-[#E6DCC9] hover:border-[#E88125] hover:bg-white transition-all duration-300 group">
                       <div className="flex items-center gap-3">
                         <div className="w-8 h-8 rounded-lg bg-[#E88125]/10 flex items-center justify-center">
                           <Download className="w-4 h-4 text-[#E88125]"/>

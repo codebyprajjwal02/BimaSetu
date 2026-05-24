@@ -4,9 +4,18 @@
 export default function ClaimDownload({ pdfUrl, claimId }) {
   if (!pdfUrl) return null
 
+  const normalizePdfUrl = (url) => {
+    if (!url) return null
+    const fixedUrl = url.replace(/\\/g, '/')
+    const localPath = fixedUrl.replace(/^https?:\/\/(?:localhost|127\.0\.0\.1)(?::\d+)?/i, '')
+    if (/^https?:\/\//i.test(fixedUrl) && !/^https?:\/\/(?:localhost|127\.0\.0\.1)(?::\d+)?/i.test(fixedUrl)) return fixedUrl
+    const BACKEND = import.meta.env.VITE_API_URL || 'http://localhost:8000'
+    return `${BACKEND.replace(/\/+$, '')}/${localPath.replace(/^\/+/, '')}`
+  }
+
   return (
     <a
-      href={pdfUrl}
+      href={normalizePdfUrl(pdfUrl)}
       target="_blank"
       rel="noopener noreferrer"
       className="inline-flex items-center gap-1.5 text-xs font-medium text-forest-400

@@ -103,7 +103,7 @@ export default function ResultCard({ result, onNewClaim }) {
       <div className="space-y-3">
         {pdf_url && (
           <a
-            href={pdf_url}
+            href={normalizePdfUrl(pdf_url)}
             target="_blank"
             rel="noopener noreferrer"
             className="btn-primary w-full flex items-center justify-center gap-2 py-3.5"
