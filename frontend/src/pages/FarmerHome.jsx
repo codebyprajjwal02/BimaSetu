@@ -36,7 +36,7 @@ const normalizePdfUrl = (pdfUrl) => {
   const fixedUrl = pdfUrl.replace(/\\/g, '/')
   const localPath = fixedUrl.replace(/^https?:\/\/(?:localhost|127\.0\.0\.1)(?::\d+)?/i, '')
   if (/^https?:\/\//i.test(fixedUrl) && !/^https?:\/\/(?:localhost|127\.0\.0\.1)(?::\d+)?/i.test(fixedUrl)) return fixedUrl
-  return `${BACKEND.replace(/\/+$, '')}/${localPath.replace(/^\/+/, '')}`
+  return `${BACKEND.replace(/\/+$/, '')}/${localPath.replace(/^\/+/, '')}`;
 }
 
 const cardStyle = {

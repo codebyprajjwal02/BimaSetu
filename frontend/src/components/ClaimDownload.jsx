@@ -10,7 +10,7 @@ export default function ClaimDownload({ pdfUrl, claimId }) {
     const localPath = fixedUrl.replace(/^https?:\/\/(?:localhost|127\.0\.0\.1)(?::\d+)?/i, '')
     if (/^https?:\/\//i.test(fixedUrl) && !/^https?:\/\/(?:localhost|127\.0\.0\.1)(?::\d+)?/i.test(fixedUrl)) return fixedUrl
     const BACKEND = import.meta.env.VITE_API_URL || 'http://localhost:8000'
-    return `${BACKEND.replace(/\/+$, '')}/${localPath.replace(/^\/+/, '')}`
+    return `${BACKEND.replace(/\/+$/, '')}/${localPath.replace(/^\/+/, '')}`
   }
 
   return (
