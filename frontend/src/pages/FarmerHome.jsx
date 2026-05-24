@@ -29,7 +29,7 @@ import {
 import { useAuth } from '../context/AuthContext'
 import { useLanguage } from '../i18n/LanguageContext'
 
-const BACKEND = import.meta.env.VITE_BACKEND_URL || 'http://localhost:8000'
+const BACKEND = import.meta.env.VITE_API_URL || 'http://localhost:8000'
 
 const cardStyle = {
   backgroundColor: '#FFFFFF',
